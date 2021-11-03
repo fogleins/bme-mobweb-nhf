@@ -5,7 +5,7 @@ import androidx.room.*
 @Dao
 interface ProjectItemDao {
     @Query("SELECT * FROM projects WHERE deleted = 0")
-    fun getProjects()
+    fun getProjects(): List<ProjectItem>
 
     @Insert
     fun add(projectItem: ProjectItem): Long
