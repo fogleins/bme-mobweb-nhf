@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import hu.bme.aut.android.ktodo.enum.TaskPriority
+import hu.bme.aut.android.ktodo.enumeration.TaskPriority
 
 @Database(entities = [TodoItem::class], version = 1)
 @TypeConverters(value = [TaskPriority::class])

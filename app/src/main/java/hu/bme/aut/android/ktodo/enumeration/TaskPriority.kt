@@ -1,4 +1,4 @@
-package hu.bme.aut.android.ktodo.enum
+package hu.bme.aut.android.ktodo.enumeration
 
 import androidx.room.TypeConverter
 

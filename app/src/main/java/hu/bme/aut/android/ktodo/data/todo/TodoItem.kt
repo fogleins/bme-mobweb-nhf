@@ -3,7 +3,7 @@ package hu.bme.aut.android.ktodo.data.todo
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import hu.bme.aut.android.ktodo.enum.TaskPriority
+import hu.bme.aut.android.ktodo.enumeration.TaskPriority
 import java.time.LocalDateTime
 import java.util.*
 
