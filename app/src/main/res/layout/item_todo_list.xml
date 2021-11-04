@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="20dp"
-    xmlns:tools="http://schemas.android.com/tools"> <!--todo: remove later-->
+    android:layout_marginVertical="10dp"
+    android:layout_marginHorizontal="20dp"> <!--todo: remove xmlns:tools later-->
 
     <CheckBox
         android:id="@+id/isCompleted"
@@ -18,16 +19,16 @@
 
         <TextView
             android:id="@+id/taskTitle"
-            android:textSize="20sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="20sp"
             tools:text="asdf" />
 
         <TextView
             android:id="@+id/taskDescription"
-            android:textSize="12sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="12sp"
             tools:text="task desc" />
 
         <LinearLayout
@@ -39,33 +40,48 @@
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:layout_gravity="center"
-                android:layout_margin="3sp"
 
-                android:src="@drawable/ic_baseline_calendar_36"
+                android:contentDescription="@string/calendar_icon"
 
-                android:contentDescription="@string/calendar_icon">
-            </ImageView>
+                android:src="@drawable/ic_baseline_calendar_36" />
 
             <TextView
                 android:id="@+id/taskDueDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginLeft="2dp"
                 android:textSize="12sp"
                 tools:text="2021-11-03" />
 
         </LinearLayout>
-
-
-
     </LinearLayout>
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:gravity="end"
-        android:layout_margin="1dp"
-        tools:text="project" />
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="1dp"
+                android:src="@drawable/project_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                tools:text="project" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>
