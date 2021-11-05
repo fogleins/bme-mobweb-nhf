@@ -7,7 +7,7 @@ interface TodoItemDao {
     /**
      * Queries the upcoming tasks.
      */
-    @Query("SELECT * FROM tasks WHERE due_date < date('now') + 30 AND completed = 0 ORDER BY due_date")
+    @Query("SELECT * FROM tasks WHERE due_date IS NOT NULL AND due_date < date('now', '+30 days') AND completed = 0 ORDER BY due_date, title")
     fun getUpcoming(): List<TodoItem>
 
     /**

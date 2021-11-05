@@ -1,17 +1,17 @@
 package hu.bme.aut.android.ktodo.data.typeconverter
 
 import androidx.room.TypeConverter
-import java.util.*
+import java.time.LocalDate
 
 class DateConverter {
 
     @TypeConverter
-    fun toDate(dateLong: Long): Date {
-        return Date(dateLong)
+    fun toDate(dateLong: Long?): LocalDate? {
+        return dateLong?.let { LocalDate.ofEpochDay(it) }
     }
 
     @TypeConverter
-    fun fromDate(date: Date): Long {
-        return date.time
+    fun fromDate(date: LocalDate?): Long? {
+        return date?.toEpochDay()
     }
 }
