@@ -52,10 +52,9 @@ class TodoAdapter(private val listener: TodoItemClickListener) :
         notifyItemRemoved(index)
     }
 
-// TODO
-//    fun update(todoItems: List<TodoItem>) {
-//        items.clear()
-//        items.addAll(todoItems)
-//        notifyDataSetChanged()
-//    }
+    fun update(todoItems: List<TodoItem>) {
+        items.clear()
+        items.addAll(todoItems)
+        notifyDataSetChanged()
+    }
 }

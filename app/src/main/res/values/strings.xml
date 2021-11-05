@@ -2,4 +2,16 @@
     <string name="app_name">ktodo</string>
     <string name="add_task">add task</string>
     <string name="calendar_icon">calendar icon</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="project">Project</string>
+    <string name="due_date">Due date</string>
+    <string name="task_properties">Edit task</string>
+
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="priority">Priority</string>
+    <string name="hint_enter_due_date">Enter due date</string>
+    <string name="hint_add_task_description">Add task description</string>
+    <string name="hint_add_task_title">Add task title</string>
 </resources>
