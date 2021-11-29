@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText"> <!-- TODO -->
+
+    <item
+        android:id="@+id/nav_upcoming"
+        android:title="Upcoming" />
+    <item
+        android:id="@+id/nav_add_project"
+        android:title="Add project" />
+
+    <item
+        android:id="@+id/projects_menu_root"
+        android:title="Projects">
+        <menu
+            android:id="@+id/projects_menu">
+            <item
+                android:id="@+id/menu_delete"
+                android:title="menu_delete" />
+            <item
+                android:id="@+id/menu_add"
+                android:title="menu_add" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/nav_stats"
+        android:title="Stats" />
+    <item
+        android:id="@+id/nav_settings"
+        android:title="Settings" />
+
+</menu>

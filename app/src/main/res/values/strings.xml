@@ -14,4 +14,7 @@
     <string name="hint_enter_due_date">Enter due date</string>
     <string name="hint_add_task_description">Add task description</string>
     <string name="hint_add_task_title">Add task title</string>
+
+    <string name="nav_drawer_open">Open</string>
+    <string name="nav_drawer_close">Close</string>
 </resources>
