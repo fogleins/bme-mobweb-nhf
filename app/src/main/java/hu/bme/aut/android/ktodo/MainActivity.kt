@@ -7,7 +7,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import hu.bme.aut.android.ktodo.adapter.TodoAdapter
-import hu.bme.aut.android.ktodo.data.todo.TodoDatabase
+import hu.bme.aut.android.ktodo.data.KTodoDatabase
 import hu.bme.aut.android.ktodo.data.todo.TodoItem
 import hu.bme.aut.android.ktodo.databinding.ActivityMainBinding
 import hu.bme.aut.android.ktodo.fragment.TodoPropertiesDialogFragment
@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TodoItemClickListener,
     TodoPropertiesDialogFragment.TodoPropertiesDialogListener {
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var database: TodoDatabase
+    private lateinit var database: KTodoDatabase
     private lateinit var adapter: TodoAdapter
 
     private lateinit var drawerToggle: ActionBarDrawerToggle
@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TodoItemClickListener,
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        database = TodoDatabase.getDatabase(applicationContext)
+        database = KTodoDatabase.getDatabase(applicationContext)
 
         binding.addTask.setOnClickListener {
             TodoPropertiesDialogFragment().show(

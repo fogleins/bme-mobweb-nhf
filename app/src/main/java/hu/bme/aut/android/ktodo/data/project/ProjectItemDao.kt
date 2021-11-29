@@ -7,6 +7,9 @@ interface ProjectItemDao {
     @Query("SELECT * FROM projects")
     fun getProjects(): List<ProjectItem>
 
+    @Query("SELECT name FROM projects WHERE id = :projectId")
+    fun getProjectName(projectId: Long): String
+
     @Insert
     fun add(projectItem: ProjectItem): Long
 

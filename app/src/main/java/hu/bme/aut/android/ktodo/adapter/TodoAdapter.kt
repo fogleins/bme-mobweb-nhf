@@ -2,9 +2,12 @@ package hu.bme.aut.android.ktodo.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import hu.bme.aut.android.ktodo.data.KTodoDatabase
 import hu.bme.aut.android.ktodo.data.todo.TodoItem
 import hu.bme.aut.android.ktodo.databinding.ItemTodoListBinding
+import kotlin.concurrent.thread
 
 class TodoAdapter(private val listener: TodoItemClickListener) :
     RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
@@ -17,10 +20,20 @@ class TodoAdapter(private val listener: TodoItemClickListener) :
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         val todo = items[position]
-
         holder.binding.taskTitle.text = todo.title
         holder.binding.taskDescription.text = todo.description
         holder.binding.taskDueDate.text = todo.dueDate.toString()
+        val activity = listener as AppCompatActivity
+        val context = activity.applicationContext
+        // separate thread is needed for getting the project's name
+        thread {
+            val projectName = if (todo.project != null) todo.project.let {
+                KTodoDatabase.getDatabase(context).projectItemDao().getProjectName(it!!)
+            } else "Inbox"
+            activity.runOnUiThread {
+                holder.binding.taskProject.text = projectName
+            }
+        }
 
         // todo do not display completed tasks
         holder.binding.isCompleted.setOnCheckedChangeListener { buttonView, isChecked ->

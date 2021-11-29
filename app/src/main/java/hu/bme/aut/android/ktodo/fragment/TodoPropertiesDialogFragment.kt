@@ -6,11 +6,9 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import hu.bme.aut.android.ktodo.R
-import hu.bme.aut.android.ktodo.data.project.ProjectDatabase
 import hu.bme.aut.android.ktodo.data.todo.TodoItem
 import hu.bme.aut.android.ktodo.databinding.DialogAddTodoBinding
 import hu.bme.aut.android.ktodo.enumeration.TaskPriority
@@ -54,7 +52,7 @@ class TodoPropertiesDialogFragment : DialogFragment() {
 //        binding.spProject.adapter = ArrayAdapter(
 //            requireContext(),
 //            R.layout.support_simple_spinner_dropdown_item,
-//            arrayOf(ProjectDatabase.getDatabasae(requireContext()).projectItemDao().getProjects()[0].name)
+//            arrayOf(ProjectDatabase.getDatabase(requireContext()).projectItemDao().getProjects()[0].name)
 //        )
 
         return AlertDialog.Builder(requireContext())
@@ -79,7 +77,7 @@ class TodoPropertiesDialogFragment : DialogFragment() {
     private fun getTodoObject() = TodoItem(
         title = binding.etTitle.text.toString(),
         description = if (binding.etDescription.text.toString().isBlank()) null else binding.etDescription.text.toString(),
-        project = 1L,// ProjectDatabase.getDatabasae(requireContext()).projectItemDao().getProjects()[0].id, /* TODO: get value from project spinner */
+        project = null,// ProjectDatabase.getDatabase(requireContext()).projectItemDao().getProjects()[0].id, /* TODO: get value from project spinner */
         priority = TaskPriority.getByOrdinal(binding.sbPriority.progress) ?: TaskPriority.NONE,
         completed = false,
         dueDate = if (binding.etDueDate.text.toString().isNotBlank()) LocalDate.parse(binding.etDueDate.text) else null
