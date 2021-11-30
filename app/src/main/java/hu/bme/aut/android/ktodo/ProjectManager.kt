@@ -42,20 +42,22 @@ class ProjectManager : AppCompatActivity(), ProjectAdapter.ProjectItemClickListe
                 R.string.dialog_title_confirm_project_deletion,
                 item.name
             )
-        ).setPositiveButton(R.string.button_yes) { _, _ ->
-            thread {
-                // first we remove all tasks in the given project
-                val itemsInProject = database.todoItemDao().getTasksInProject(item.id!!)
-                for (todoItem in itemsInProject) {
-                    database.todoItemDao().delete(todoItem)
-                }
-                // and after that we remove the project itself
-                database.projectItemDao().delete(item)
-                runOnUiThread {
-                    projectAdapter.removeItem(item)
+        )
+            .setMessage(R.string.dialog_message_confirm_project_deletion)
+            .setPositiveButton(R.string.button_yes) { _, _ ->
+                thread {
+                    // first we remove all tasks in the given project
+                    val itemsInProject = database.todoItemDao().getTasksInProject(item.id!!)
+                    for (todoItem in itemsInProject) {
+                        database.todoItemDao().delete(todoItem)
+                    }
+                    // and after that we remove the project itself
+                    database.projectItemDao().delete(item)
+                    runOnUiThread {
+                        projectAdapter.removeItem(item)
+                    }
                 }
             }
-        }
             .setNegativeButton(R.string.button_no, null).create().show()
     }
 }

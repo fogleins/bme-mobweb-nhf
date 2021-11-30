@@ -16,7 +16,8 @@
     <string name="hint_enter_due_date">Enter due date</string>
     <string name="hint_add_task_description">Add task description</string>
     <string name="hint_add_task_title">Add task title</string>
-    <string name="dialog_title_confirm_project_deletion">Are you sure you want to delete %1$s and all its tasks?</string>
+    <string name="dialog_title_confirm_project_deletion">Are you sure you want to delete %1$s?</string>
+    <string name="dialog_message_confirm_project_deletion">Deleting a project will remove all of its tasks. This action cannot be undone. Do you still want to proceed?</string>
 
     <string name="nav_drawer_open">Open</string>
     <string name="nav_drawer_close">Close</string>
