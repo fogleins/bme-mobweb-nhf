@@ -1,5 +1,6 @@
 package hu.bme.aut.android.ktodo
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.InputType
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TodoItemClickListener,
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        title = "Upcoming" // shows the upcoming view by default
 
         database = KTodoDatabase.getDatabase(applicationContext)
 
@@ -62,19 +64,32 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TodoItemClickListener,
             selectedMenuItem = it
             selectedMenuItem.isChecked = true
             Log.d("item", selectedMenuItem.title.toString())
-            if (selectedMenuItem.title == "Add project") {
-                Log.d("addProjectClickListener", "add project click listener works")
-                showNewProjectDialog()
-                selectedMenuItem.isChecked = false
-                previouslySelected.isChecked = true
-            } else if (selectedMenuItem.title == "Stats") {
-                Log.d("statsClickListener", "works")
+            when (selectedMenuItem.title) {
+                "Add project" -> {
+                    Log.d("addProjectClickListener", "add project click listener works")
+                    showNewProjectDialog()
+                    selectedMenuItem.isChecked = false
+                    previouslySelected.isChecked = true
+                }
+                "Manage projects" -> {
+                    val intent = Intent(this, ProjectManager::class.java)
+                    startActivity(intent)
+                }
+                "Stats" -> {
+                    Log.d("statsClickListener", "works")
+                }
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             return@setNavigationItemSelectedListener true
         }
 
         initRecyclerView()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        // refresh the list of tasks when returning to the activity
+        loadItemsInBackground()
     }
 
     override fun onItemChanged(item: TodoItem) {

@@ -10,10 +10,13 @@
 
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
+    <string name="button_yes">Yes</string>
+    <string name="button_no">No</string>
     <string name="priority">Priority</string>
     <string name="hint_enter_due_date">Enter due date</string>
     <string name="hint_add_task_description">Add task description</string>
     <string name="hint_add_task_title">Add task title</string>
+    <string name="dialog_title_confirm_project_deletion">Are you sure you want to delete %1$s and all its tasks?</string>
 
     <string name="nav_drawer_open">Open</string>
     <string name="nav_drawer_close">Close</string>

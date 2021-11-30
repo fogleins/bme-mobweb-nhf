@@ -9,6 +9,9 @@
     <item
         android:id="@+id/nav_add_project"
         android:title="Add project" />
+    <item
+        android:id="@+id/nav_manage_projects"
+        android:title="Manage projects" />
 
     <item
         android:id="@+id/projects_menu_root"

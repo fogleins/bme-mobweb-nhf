@@ -14,7 +14,7 @@ interface TodoItemDao {
      * Gets all tasks from the given project.
      */
     @Query("SELECT * FROM tasks WHERE project_id = :projectId")
-    fun getTasksInProject(projectId: Int): List<TodoItem>
+    fun getTasksInProject(projectId: Long): List<TodoItem>
 
     @Insert
     fun add(todoItem: TodoItem): Long
