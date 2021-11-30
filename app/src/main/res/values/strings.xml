@@ -21,4 +21,8 @@
 
     <string name="nav_drawer_open">Open</string>
     <string name="nav_drawer_close">Close</string>
+    <string name="dialog_title_add_project">Enter project name</string>
+
+    <string name="snackbar_todo_deleted_message">%1$s deleted</string>
+    <string name="button_undo">Undo</string>
 </resources>

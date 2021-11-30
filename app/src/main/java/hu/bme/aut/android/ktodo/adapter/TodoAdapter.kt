@@ -12,7 +12,7 @@ import kotlin.concurrent.thread
 class TodoAdapter(private val listener: TodoItemClickListener) :
     RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
 
-    private val items = mutableListOf<TodoItem>()
+    val items = mutableListOf<TodoItem>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = TodoViewHolder(
         ItemTodoListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -28,6 +28,7 @@ class TodoAdapter(private val listener: TodoItemClickListener) :
         // separate thread is needed for getting the project's name
         thread {
             val projectName = if (todo.project != null) todo.project.let {
+                // TODO: menjen át a main activitybe?
                 KTodoDatabase.getDatabase(context).projectItemDao().getProjectName(it!!)
             } else "Inbox"
             activity.runOnUiThread {
