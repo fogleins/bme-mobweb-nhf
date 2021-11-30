@@ -12,4 +12,7 @@ data class ProjectItem(
     @ColumnInfo(name = "created") var created: LocalDateTime = LocalDateTime.now(),
     @ColumnInfo(name = "modified") var modified: LocalDateTime = LocalDateTime.now()
 ) {
+    override fun toString(): String {
+        return this.name
+    }
 }
