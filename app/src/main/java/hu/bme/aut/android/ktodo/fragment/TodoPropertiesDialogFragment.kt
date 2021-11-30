@@ -41,8 +41,7 @@ class TodoPropertiesDialogFragment : DialogFragment() {
         binding = DialogAddTodoBinding.inflate(LayoutInflater.from(context))
         binding.etDueDate.setOnClickListener {
             val calendar: Calendar = Calendar.getInstance()
-            var now: LocalDate = LocalDate.now()
-            val datepicker: DatePickerDialog = DatePickerDialog(requireContext())
+            val datepicker = DatePickerDialog(requireContext())
             datepicker.setOnDateSetListener { view, year, month, dayOfMonth ->
                 calendar.set(Calendar.YEAR, year)
                 calendar.set(Calendar.MONTH, month)
