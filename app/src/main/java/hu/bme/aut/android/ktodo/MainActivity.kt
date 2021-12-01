@@ -11,13 +11,18 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import hu.bme.aut.android.ktodo.adapter.TodoAdapter
 import hu.bme.aut.android.ktodo.data.KTodoDatabase
 import hu.bme.aut.android.ktodo.data.project.ProjectItem
 import hu.bme.aut.android.ktodo.data.todo.TodoItem
 import hu.bme.aut.android.ktodo.databinding.ActivityMainBinding
 import hu.bme.aut.android.ktodo.fragment.TodoPropertiesDialogFragment
+import java.util.*
+import kotlin.concurrent.schedule
 import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(), TodoAdapter.TodoItemClickListener,
@@ -97,7 +102,29 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TodoItemClickListener,
     }
 
     override fun onItemRemoved(item: TodoItem) {
-        TODO("Not yet implemented")
+        var threadDeleteEnabled = true
+        val index = adapter.items.indexOf(item)
+        adapter.removeTodo(item)
+
+        val snackbar = Snackbar.make(
+            binding.rvTodo,
+            applicationContext.getString(R.string.snackbar_todo_deleted_message, item.title),
+            Snackbar.LENGTH_LONG
+        ).setAction(R.string.button_undo) {
+            adapter.items.add(index, item)
+            adapter.notifyItemInserted(index)
+            threadDeleteEnabled = false
+        }
+        val snackbarDuration = snackbar.duration
+        snackbar.show()
+
+        Timer().schedule(if (snackbarDuration == Snackbar.LENGTH_LONG) 2750 else 1500) {
+            thread {
+                if (threadDeleteEnabled)
+                    database.todoItemDao().delete(item)
+            }
+        }
+
     }
 
     private fun initRecyclerView() {
@@ -105,6 +132,20 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TodoItemClickListener,
         binding.rvTodo.layoutManager = LinearLayoutManager(this)
         binding.rvTodo.adapter = adapter
         loadItemsInBackground()
+
+        // add swipe actions + a snackbar to undo the deletion
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ) = false
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val index = viewHolder.adapterPosition
+                val toDelete = adapter.items[index]
+                onItemRemoved(toDelete)
+            }
+        }).attachToRecyclerView(binding.rvTodo)
     }
 
     private fun loadItemsInBackground() {
@@ -122,7 +163,6 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TodoItemClickListener,
             runOnUiThread {
                 adapter.addTodo(newItem)
             }
-            // todo: do not show tasks where due date = null in the upcoming view
             loadItemsInBackground()
         }
     }
@@ -144,7 +184,7 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TodoItemClickListener,
         val et = EditText(this)
         et.inputType = InputType.TYPE_CLASS_TEXT
         AlertDialog.Builder(this)
-            .setTitle("Enter project name")
+            .setTitle(getString(R.string.dialog_title_add_project))
             .setView(et)
             .setPositiveButton(R.string.button_ok) { _, _ ->
                 thread {
