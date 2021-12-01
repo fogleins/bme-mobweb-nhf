@@ -89,6 +89,8 @@ class TodoPropertiesDialogFragment : DialogFragment() {
     fun refreshProjects() {
         thread {
             projects = KTodoDatabase.getDatabase(requireContext()).projectItemDao().getProjects()
+            // dummy for default value in the spinner
+            (projects as MutableList).add(0, ProjectItem(name = "Inbox"))
         }
     }
 }
