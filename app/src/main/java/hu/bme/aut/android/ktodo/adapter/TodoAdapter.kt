@@ -36,11 +36,12 @@ class TodoAdapter(private val listener: TodoItemClickListener) :
             }
         }
 
-        // todo do not display completed tasks
         holder.binding.isCompleted.setOnCheckedChangeListener { buttonView, isChecked ->
             todo.completed = isChecked
-            listener.onItemChanged(todo)
+            listener.onTodoCompleted(todo)
         }
+
+        holder.bindListItemClickListener(items[position])
     }
 
     override fun getItemCount(): Int {
@@ -48,12 +49,19 @@ class TodoAdapter(private val listener: TodoItemClickListener) :
     }
 
     interface TodoItemClickListener {
-        fun onItemChanged(item: TodoItem)
+        fun onItemEdit(item: TodoItem)
+        fun onTodoCompleted(item: TodoItem)
         fun onItemRemoved(item: TodoItem) // TODO
     }
 
     inner class TodoViewHolder(val binding: ItemTodoListBinding) :
-        RecyclerView.ViewHolder(binding.root)
+        RecyclerView.ViewHolder(binding.root) {
+            fun bindListItemClickListener(item: TodoItem) {
+                binding.root.setOnClickListener {
+                    listener.onItemEdit(item)
+                }
+            }
+        }
 
     fun addTodo(todo: TodoItem) {
         items.add(todo)

@@ -97,8 +97,19 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TodoItemClickListener,
         loadItemsInBackground()
     }
 
-    override fun onItemChanged(item: TodoItem) {
+    override fun onItemEdit(item: TodoItem) {
         TODO("Not yet implemented")
+    }
+
+    override fun onTodoCompleted(item: TodoItem) {
+        thread {
+            database.todoItemDao().update(item)
+            val index = adapter.items[adapter.items.indexOf(item)]
+            runOnUiThread {
+                // if a task is marked as complete, we remove it from the upcoming list
+                adapter.removeTodo(index)
+            }
+        }
     }
 
     override fun onItemRemoved(item: TodoItem) {
