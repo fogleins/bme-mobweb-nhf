@@ -3,10 +3,13 @@ package hu.bme.aut.android.ktodo.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import hu.bme.aut.android.ktodo.R
 import hu.bme.aut.android.ktodo.data.KTodoDatabase
 import hu.bme.aut.android.ktodo.data.todo.TodoItem
 import hu.bme.aut.android.ktodo.databinding.ItemTodoListBinding
+import java.time.LocalDate
 import kotlin.concurrent.thread
 
 class TodoAdapter(private val listener: TodoItemClickListener) :
@@ -35,6 +38,15 @@ class TodoAdapter(private val listener: TodoItemClickListener) :
                 holder.binding.taskProject.text = projectName
             }
         }
+        // change calendar icon to red if the task is overdue
+        if (todo.dueDate != null && todo.dueDate!!.toEpochDay() < LocalDate.now().toEpochDay()) {
+            holder.binding.calendarIcon.setImageDrawable(
+                ContextCompat.getDrawable(
+                    context,
+                    R.drawable.ic_baseline_calendar_overdue_36
+                )
+            )
+        }
 
         holder.binding.isCompleted.setOnCheckedChangeListener { buttonView, isChecked ->
             todo.completed = isChecked
@@ -56,12 +68,12 @@ class TodoAdapter(private val listener: TodoItemClickListener) :
 
     inner class TodoViewHolder(val binding: ItemTodoListBinding) :
         RecyclerView.ViewHolder(binding.root) {
-            fun bindListItemClickListener(item: TodoItem) {
-                binding.root.setOnClickListener {
-                    listener.onItemEdit(item)
-                }
+        fun bindListItemClickListener(item: TodoItem) {
+            binding.root.setOnClickListener {
+                listener.onItemEdit(item)
             }
         }
+    }
 
     fun addTodo(todo: TodoItem) {
         items.add(todo)
