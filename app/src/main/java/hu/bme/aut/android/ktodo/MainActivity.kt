@@ -97,8 +97,14 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TodoItemClickListener,
         loadItemsInBackground()
     }
 
+    /**
+     * Event handler for when the user clicks a task to edit its properties.
+     */
     override fun onItemEdit(item: TodoItem) {
-        TODO("Not yet implemented")
+        TodoPropertiesDialogFragment(item).show(
+            supportFragmentManager,
+            TodoPropertiesDialogFragment.TAG
+        )
     }
 
     override fun onTodoCompleted(item: TodoItem) {
@@ -175,6 +181,20 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TodoItemClickListener,
                 adapter.addTodo(newItem)
             }
             loadItemsInBackground()
+        }
+    }
+
+    /**
+     * Called from the TodoPropertiesDialogFragment class after a task has been updated; applies the
+     * changes on the database.
+     */
+    override fun onTodoEdited(editedItem: TodoItem) {
+        // TODO: snack bar undo?
+        thread {
+            database.todoItemDao().update(editedItem)
+            runOnUiThread {
+                adapter.updateTodo(editedItem)
+            }
         }
     }
 

@@ -13,6 +13,7 @@ class ProjectAdapter(private val listener: ProjectItemClickListener) :
 
     interface ProjectItemClickListener {
         fun onProjectItemRemoved(item: ProjectItem)
+        fun onProjectItemEdit(item: ProjectItem)
     }
 
     inner class ProjectViewHolder(val binding: ItemProjectListBinding) :
@@ -33,6 +34,10 @@ class ProjectAdapter(private val listener: ProjectItemClickListener) :
         holder.binding.btnRemoveProject.setOnClickListener {
             listener.onProjectItemRemoved(projectItem)
         }
+
+        holder.binding.btnEditProject.setOnClickListener {
+            listener.onProjectItemEdit(projectItem)
+        }
     }
 
     override fun getItemCount(): Int = projects.size
@@ -41,6 +46,10 @@ class ProjectAdapter(private val listener: ProjectItemClickListener) :
         projects.clear()
         projects.addAll(projectItems)
         notifyDataSetChanged()
+    }
+
+    fun update(projectItem: ProjectItem) {
+        notifyItemChanged(projects.indexOf(projectItem))
     }
 
     fun removeItem(item: ProjectItem) {

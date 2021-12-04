@@ -19,9 +19,10 @@ import java.time.LocalDate
 import java.util.*
 import kotlin.concurrent.thread
 
-class TodoPropertiesDialogFragment : DialogFragment() {
+class TodoPropertiesDialogFragment(private val item: TodoItem? = null) : DialogFragment() {
     interface TodoPropertiesDialogListener {
         fun onTodoCreated(newItem: TodoItem)
+        fun onTodoEdited(editedItem: TodoItem)
     }
 
     private lateinit var listener: TodoPropertiesDialogListener
@@ -39,16 +40,15 @@ class TodoPropertiesDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         binding = DialogAddTodoBinding.inflate(LayoutInflater.from(context))
+        val dateFormat = "yyyy-MM-dd"
+        val simpleDateFormat = SimpleDateFormat(dateFormat, Locale.forLanguageTag("HU"))
+        val calendar: Calendar = Calendar.getInstance()
+        val datepicker = DatePickerDialog(requireContext())
         binding.etDueDate.setOnClickListener {
-            val calendar: Calendar = Calendar.getInstance()
-            val datepicker = DatePickerDialog(requireContext())
             datepicker.setOnDateSetListener { view, year, month, dayOfMonth ->
                 calendar.set(Calendar.YEAR, year)
                 calendar.set(Calendar.MONTH, month)
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
-                val dateFormat = "yyyy-MM-dd"
-                val simpleDateFormat = SimpleDateFormat(dateFormat, Locale.forLanguageTag("HU"))
                 binding.etDueDate.setText(simpleDateFormat.format(calendar.time))
             }
             datepicker.show()
@@ -59,12 +59,45 @@ class TodoPropertiesDialogFragment : DialogFragment() {
             projects
         )
 
+        // if editing an existing item
+        if (item != null) {
+            binding.etTitle.setText(item.title)
+            binding.etDescription.setText(item.description)
+            var itemProject: ProjectItem? = null
+            for (project in projects) {
+                if (project.id == item.project) {
+                    itemProject = project
+                }
+            }
+            if (itemProject != null)
+                binding.spProject.setSelection(projects.indexOf(itemProject))
+            else binding.spProject.setSelection(0)
+            binding.sbPriority.progress = item.priority.ordinal
+            binding.etDueDate.setText(simpleDateFormat.format(calendar.time))
+        }
+
         return AlertDialog.Builder(requireContext())
             .setTitle(R.string.task_properties)
             .setView(binding.root)
-            .setPositiveButton(R.string.button_ok) { dialogInterface, i ->
-                if (inputIsValid()) {
-                    listener.onTodoCreated(getTodoObject())
+            .setPositiveButton(R.string.button_ok) { _, _ ->
+                if (item == null) {
+                    if (inputIsValid()) {
+                        listener.onTodoCreated(getTodoObject())
+                    }
+                } else {
+                    if (inputIsValid()) {
+                        // update the task's attributes
+                        item.title = binding.etTitle.text.toString()
+                        item.description = binding.etDescription.text.toString()
+                        item.project = (binding.spProject.selectedItem as ProjectItem).id
+                        item.priority = TaskPriority.getByOrdinal(binding.sbPriority.progress)
+                            ?: TaskPriority.NONE
+                        item.dueDate =
+                            if (binding.etDueDate.text.toString().isNotBlank()) LocalDate.parse(
+                                binding.etDueDate.text
+                            ) else null
+                        listener.onTodoEdited(item)
+                    }
                 }
             }
             .setNegativeButton(R.string.button_cancel, null)
@@ -79,11 +112,14 @@ class TodoPropertiesDialogFragment : DialogFragment() {
 
     private fun getTodoObject() = TodoItem(
         title = binding.etTitle.text.toString(),
-        description = if (binding.etDescription.text.toString().isBlank()) null else binding.etDescription.text.toString(),
+        description = if (binding.etDescription.text.toString()
+                .isBlank()
+        ) null else binding.etDescription.text.toString(),
         project = (binding.spProject.selectedItem as ProjectItem).id,
         priority = TaskPriority.getByOrdinal(binding.sbPriority.progress) ?: TaskPriority.NONE,
         completed = false,
-        dueDate = if (binding.etDueDate.text.toString().isNotBlank()) LocalDate.parse(binding.etDueDate.text) else null
+        dueDate = if (binding.etDueDate.text.toString().isNotBlank()
+        ) LocalDate.parse(binding.etDueDate.text) else null
     )
 
     fun refreshProjects() {

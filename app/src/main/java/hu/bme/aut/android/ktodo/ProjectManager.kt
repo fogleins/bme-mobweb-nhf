@@ -2,6 +2,8 @@ package hu.bme.aut.android.ktodo
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.InputType
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import hu.bme.aut.android.ktodo.adapter.ProjectAdapter
@@ -59,5 +61,26 @@ class ProjectManager : AppCompatActivity(), ProjectAdapter.ProjectItemClickListe
                 }
             }
             .setNegativeButton(R.string.button_no, null).create().show()
+    }
+
+    override fun onProjectItemEdit(item: ProjectItem) {
+        val et = EditText(this)
+        et.setText(item.name)
+        et.inputType = InputType.TYPE_CLASS_TEXT
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.dialog_title_add_project))
+            .setView(et)
+            .setPositiveButton(R.string.button_ok) { _, _ ->
+                thread {
+                    item.name = et.text.toString()
+                    database.projectItemDao().update(item)
+                    runOnUiThread {
+                        projectAdapter.update(item)
+                    }
+                    // TODO: update gui
+                }
+            }
+            .setNegativeButton(R.string.button_cancel, null)
+            .create().show()
     }
 }

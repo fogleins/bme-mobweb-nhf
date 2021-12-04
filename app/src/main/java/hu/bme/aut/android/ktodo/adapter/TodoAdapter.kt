@@ -51,7 +51,7 @@ class TodoAdapter(private val listener: TodoItemClickListener) :
     interface TodoItemClickListener {
         fun onItemEdit(item: TodoItem)
         fun onTodoCompleted(item: TodoItem)
-        fun onItemRemoved(item: TodoItem) // TODO
+        fun onItemRemoved(item: TodoItem)
     }
 
     inner class TodoViewHolder(val binding: ItemTodoListBinding) :
@@ -72,6 +72,10 @@ class TodoAdapter(private val listener: TodoItemClickListener) :
         val index = items.indexOf(todo)
         items.remove(todo)
         notifyItemRemoved(index)
+    }
+
+    fun updateTodo(todo: TodoItem) {
+        notifyItemChanged(items.indexOf(todo))
     }
 
     fun update(todoItems: List<TodoItem>) {
