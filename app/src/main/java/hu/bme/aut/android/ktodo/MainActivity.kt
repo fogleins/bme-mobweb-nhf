@@ -11,6 +11,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -148,6 +149,13 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TodoItemClickListener,
         adapter = TodoAdapter(this)
         binding.rvTodo.layoutManager = LinearLayoutManager(this)
         binding.rvTodo.adapter = adapter
+        // add a divider in between list items
+        binding.rvTodo.addItemDecoration(
+            DividerItemDecoration(
+                applicationContext,
+                DividerItemDecoration.VERTICAL
+            )
+        )
         loadItemsInBackground()
 
         // add swipe actions + a snackbar to undo the deletion
