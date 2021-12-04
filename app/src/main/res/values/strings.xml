@@ -25,4 +25,5 @@
 
     <string name="snackbar_todo_deleted_message">%1$s deleted</string>
     <string name="button_undo">Undo</string>
+    <string name="project_default_inbox">Inbox</string>
 </resources>

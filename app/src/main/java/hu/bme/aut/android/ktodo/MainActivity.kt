@@ -90,12 +90,14 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TodoItemClickListener,
         }
 
         initRecyclerView()
+        populateNavDrawerWithProjectNames()
     }
 
     override fun onRestart() {
         super.onRestart()
         // refresh the list of tasks when returning to the activity
         loadItemsInBackground()
+        updateNavDrawerProjects()
     }
 
     /**
@@ -236,5 +238,42 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TodoItemClickListener,
             }
             .setNegativeButton(R.string.button_cancel, null)
             .create().show()
+    }
+
+    /**
+     * Adds all projects
+     */
+    private fun populateNavDrawerWithProjectNames() {
+        // update list of projects in the nav drawer
+        thread {
+            val projects = database.projectItemDao().getProjects()
+            val projectsMenu = binding.navList.menu.getItem(3).subMenu
+            runOnUiThread {
+                projectsMenu.add(getString(R.string.project_default_inbox))
+                for (project in projects) {
+                    projectsMenu.add(project.name)
+                    // todo: add onClickListener for the menu item
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks whether a project's name has been modified, and updates the list of projects in the
+     * nav drawer if needed.
+     */
+    private fun updateNavDrawerProjects() {
+        thread {
+            val projects = database.projectItemDao().getProjects()
+            val projectsMenu = binding.navList.menu.getItem(3).subMenu
+            projects.forEachIndexed { index, projectItem ->
+                val menuItem = projectsMenu.getItem(index)
+                if (menuItem.title != projectItem.name) {
+                    runOnUiThread {
+                        menuItem.title = projectItem.name
+                    }
+                }
+            }
+        }
     }
 }
