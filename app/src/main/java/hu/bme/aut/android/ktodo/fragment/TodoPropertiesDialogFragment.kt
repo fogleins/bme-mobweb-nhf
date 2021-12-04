@@ -19,13 +19,14 @@ import java.time.LocalDate
 import java.util.*
 import kotlin.concurrent.thread
 
-class TodoPropertiesDialogFragment(private val item: TodoItem? = null) : DialogFragment() {
+class TodoPropertiesDialogFragment(
+    private val listener: TodoPropertiesDialogListener,
+    private val item: TodoItem? = null
+) : DialogFragment() {
     interface TodoPropertiesDialogListener {
         fun onTodoCreated(newItem: TodoItem)
         fun onTodoEdited(editedItem: TodoItem)
     }
-
-    private lateinit var listener: TodoPropertiesDialogListener
 
     private lateinit var binding: DialogAddTodoBinding
 
@@ -33,8 +34,6 @@ class TodoPropertiesDialogFragment(private val item: TodoItem? = null) : DialogF
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        listener = context as? TodoPropertiesDialogListener
-            ?: throw RuntimeException("Activity must implement the TodoPropertiesDialogListener interface!")
         refreshProjects()
     }
 
@@ -73,7 +72,15 @@ class TodoPropertiesDialogFragment(private val item: TodoItem? = null) : DialogF
                 binding.spProject.setSelection(projects.indexOf(itemProject))
             else binding.spProject.setSelection(0)
             binding.sbPriority.progress = item.priority.ordinal
-            binding.etDueDate.setText(simpleDateFormat.format(calendar.time))
+            if (item.dueDate != null) {
+                calendar.set(
+                    item.dueDate!!.year,
+                    item.dueDate!!.monthValue - 1,
+                    item.dueDate!!.dayOfMonth
+                )
+                binding.etDueDate.setText(simpleDateFormat.format(calendar.time))
+            }
+
         }
 
         return AlertDialog.Builder(requireContext())

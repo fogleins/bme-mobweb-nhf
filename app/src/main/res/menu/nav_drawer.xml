@@ -5,17 +5,17 @@
 
     <item
         android:id="@+id/nav_upcoming"
-        android:title="Upcoming" />
+        android:title="@string/upcoming" />
     <item
         android:id="@+id/nav_add_project"
-        android:title="Add project" />
+        android:title="@string/nav_item_add_project" />
     <item
         android:id="@+id/nav_manage_projects"
-        android:title="Manage projects" />
+        android:title="@string/nav_item_manage_projects" />
 
     <item
         android:id="@+id/projects_menu_root"
-        android:title="Projects">
+        android:title="@string/nav_item_projects">
         <menu
             android:id="@+id/projects_menu">
         </menu>
@@ -23,9 +23,9 @@
 
     <item
         android:id="@+id/nav_stats"
-        android:title="Stats" />
+        android:title="@string/nav_item_stats" />
     <item
         android:id="@+id/nav_settings"
-        android:title="Settings" />
+        android:title="@string/nav_item_settings" />
 
 </menu>

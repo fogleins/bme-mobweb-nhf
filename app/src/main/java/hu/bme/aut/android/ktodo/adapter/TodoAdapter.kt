@@ -9,6 +9,7 @@ import hu.bme.aut.android.ktodo.R
 import hu.bme.aut.android.ktodo.data.KTodoDatabase
 import hu.bme.aut.android.ktodo.data.todo.TodoItem
 import hu.bme.aut.android.ktodo.databinding.ItemTodoListBinding
+import hu.bme.aut.android.ktodo.fragment.MainListViewFragment
 import java.time.LocalDate
 import kotlin.concurrent.thread
 
@@ -26,15 +27,15 @@ class TodoAdapter(private val listener: TodoItemClickListener) :
         holder.binding.taskTitle.text = todo.title
         holder.binding.taskDescription.text = todo.description
         holder.binding.taskDueDate.text = todo.dueDate.toString()
-        val activity = listener as AppCompatActivity
-        val context = activity.applicationContext
+        val activity = (listener as? MainListViewFragment ?: throw RuntimeException("activity is null")).activity
+        val context = listener.context
         // separate thread is needed for getting the project's name
         thread {
             val projectName = if (todo.project != null) todo.project.let {
                 // TODO: menjen át a main activitybe?
-                KTodoDatabase.getDatabase(context).projectItemDao().getProjectName(it!!)
+                KTodoDatabase.getDatabase(context!!).projectItemDao().getProjectName(it!!)
             } else "Inbox"
-            activity.runOnUiThread {
+            activity!!.runOnUiThread {
                 holder.binding.taskProject.text = projectName
             }
         }
@@ -42,12 +43,20 @@ class TodoAdapter(private val listener: TodoItemClickListener) :
         if (todo.dueDate != null && todo.dueDate!!.toEpochDay() < LocalDate.now().toEpochDay()) {
             holder.binding.calendarIcon.setImageDrawable(
                 ContextCompat.getDrawable(
-                    context,
+                    context!!,
                     R.drawable.ic_baseline_calendar_overdue_36
+                )
+            )
+        } else {
+            holder.binding.calendarIcon.setImageDrawable(
+                ContextCompat.getDrawable(
+                    context!!,
+                    R.drawable.ic_baseline_calendar_36
                 )
             )
         }
 
+        holder.binding.isCompleted.isChecked = todo.completed
         holder.binding.isCompleted.setOnCheckedChangeListener { buttonView, isChecked ->
             todo.completed = isChecked
             listener.onTodoCompleted(todo)
