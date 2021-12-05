@@ -19,6 +19,16 @@ interface TodoItemDao {
     @Query("SELECT * FROM tasks WHERE project_id = :projectId AND completed = 0")
     fun getTasksInProject(projectId: Long): List<TodoItem>
 
+    @Query("SELECT DATE(completed_at, 'unixepoch') AS comp, COUNT(*) as count FROM tasks " +
+            "WHERE completed = 1 AND DATETIME(completed_at, 'unixepoch') BETWEEN datetime('now', '-7 days') " +
+            "AND datetime('now') GROUP BY strftime('%Y', comp), strftime('%m', comp), strftime('%d', comp)")
+    fun getProductivity7days(): List<TodoProductivityTuple>
+
+    @Query("SELECT DATE(completed_at, 'unixepoch') AS comp, COUNT(*) as count FROM tasks " +
+            "WHERE completed = 1 AND DATETIME(completed_at, 'unixepoch') BETWEEN datetime('now', '-30 days') " +
+            "AND datetime('now') GROUP BY strftime('%Y', comp), strftime('%m', comp), strftime('%d', comp)")
+    fun getProductivity30days(): List<TodoProductivityTuple>
+
     @Insert
     fun add(todoItem: TodoItem): Long
 
