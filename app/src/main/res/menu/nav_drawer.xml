@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="HardcodedText"> <!-- TODO -->
+    tools:ignore="HardcodedText">
 
     <item
         android:id="@+id/nav_upcoming"
@@ -9,6 +9,9 @@
     <item
         android:id="@+id/nav_inbox"
         android:title="@string/inbox"/>
+    <item
+        android:id="@+id/nav_stats"
+        android:title="@string/nav_item_stats" />
     <item
         android:id="@+id/nav_add_project"
         android:title="@string/nav_item_add_project" />
@@ -23,12 +26,5 @@
             android:id="@+id/projects_menu">
         </menu>
     </item>
-
-    <item
-        android:id="@+id/nav_stats"
-        android:title="@string/nav_item_stats" />
-    <item
-        android:id="@+id/nav_settings"
-        android:title="@string/nav_item_settings" />
 
 </menu>

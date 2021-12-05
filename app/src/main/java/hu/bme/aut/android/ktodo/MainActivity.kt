@@ -30,7 +30,10 @@ class MainActivity : AppCompatActivity() {
 
     private val navDrawerUpcomingIndex = 0
     private val navDrawerInboxIndex = 1
-    private val navDrawerSubmenuIndex = 4
+    private val navDrawerStatsIndex = 2
+    private val navDrawerAddProjectIndex = 3
+    private val navDrawerManageProjectsIndex = 4
+    private val navDrawerSubmenuIndex = 5
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,58 +54,8 @@ class MainActivity : AppCompatActivity() {
         drawerLayout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        selectedMenuItem = binding.navList.menu.getItem(0)
-        binding.navList.setNavigationItemSelectedListener {
-            selectedMenuItem.isChecked = false
-            val previouslySelected = selectedMenuItem /* Needed when adding a new project */
-            selectedMenuItem = it
-            selectedMenuItem.isChecked = true
-            Log.d("item", selectedMenuItem.title.toString())
-            when (selectedMenuItem.title) {
-                "Add project" -> {
-                    Log.d("addProjectClickListener", "add project click listener works")
-                    showNewProjectDialog()
-                    selectedMenuItem.isChecked = false
-                    previouslySelected.isChecked = true
-                }
-                "Manage projects" -> {
-                    val intent = Intent(this, ProjectManager::class.java)
-                    startActivity(intent)
-                }
-                "Stats" -> {
-                    val intent = Intent(this, StatsActivity::class.java)
-                    startActivity(intent)
-                }
-            }
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-            return@setNavigationItemSelectedListener true
-        }
-        binding.navList.menu.getItem(navDrawerUpcomingIndex).setOnMenuItemClickListener {
-            if (fragment.listViewType == ListViewType.UPCOMING) {
-                closeDrawer()
-                return@setOnMenuItemClickListener false
-            }
-            val fragmentTransaction = supportFragmentManager.beginTransaction()
-            fragmentTransaction.remove(fragment)
-            fragment = MainListViewFragment(ListViewType.UPCOMING)
-            fragmentTransaction.add(binding.mainContent.id, fragment)
-            fragmentTransaction.commit()
-            closeDrawer()
-            return@setOnMenuItemClickListener true
-        }
-        binding.navList.menu.getItem(navDrawerInboxIndex).setOnMenuItemClickListener {
-            if (fragment.listViewType == ListViewType.INBOX) {
-                closeDrawer()
-                return@setOnMenuItemClickListener false
-            }
-            val fragmentTransaction = supportFragmentManager.beginTransaction()
-            fragmentTransaction.remove(fragment)
-            fragment = MainListViewFragment(ListViewType.INBOX)
-            fragmentTransaction.add(binding.mainContent.id, fragment)
-            fragmentTransaction.commit()
-            closeDrawer()
-            return@setOnMenuItemClickListener true
-        }
+
+        initDrawerItemClickListeners()
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         // show the upcoming view by default
         fragment = MainListViewFragment()
@@ -207,6 +160,55 @@ class MainActivity : AppCompatActivity() {
     private fun closeDrawer() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
+        }
+    }
+
+    /**
+     * Adds click event handlers for the items on the nav drawer.
+     */
+    private fun initDrawerItemClickListeners() {
+        binding.navList.menu.getItem(navDrawerUpcomingIndex).setOnMenuItemClickListener {
+            if (fragment.listViewType == ListViewType.UPCOMING) {
+                closeDrawer()
+                return@setOnMenuItemClickListener false
+            }
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            fragmentTransaction.remove(fragment)
+            fragment = MainListViewFragment(ListViewType.UPCOMING)
+            fragmentTransaction.add(binding.mainContent.id, fragment)
+            fragmentTransaction.commit()
+            closeDrawer()
+            return@setOnMenuItemClickListener true
+        }
+        binding.navList.menu.getItem(navDrawerInboxIndex).setOnMenuItemClickListener {
+            if (fragment.listViewType == ListViewType.INBOX) {
+                closeDrawer()
+                return@setOnMenuItemClickListener false
+            }
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            fragmentTransaction.remove(fragment)
+            fragment = MainListViewFragment(ListViewType.INBOX)
+            fragmentTransaction.add(binding.mainContent.id, fragment)
+            fragmentTransaction.commit()
+            closeDrawer()
+            return@setOnMenuItemClickListener true
+        }
+        binding.navList.menu.getItem(navDrawerStatsIndex).setOnMenuItemClickListener {
+            val intent = Intent(this, StatsActivity::class.java)
+            closeDrawer()
+            startActivity(intent)
+            return@setOnMenuItemClickListener true
+        }
+        binding.navList.menu.getItem(navDrawerAddProjectIndex).setOnMenuItemClickListener {
+            closeDrawer()
+            showNewProjectDialog()
+            return@setOnMenuItemClickListener true
+        }
+        binding.navList.menu.getItem(navDrawerManageProjectsIndex).setOnMenuItemClickListener {
+            val intent = Intent(this, ProjectManager::class.java)
+            closeDrawer()
+            startActivity(intent)
+            return@setOnMenuItemClickListener true
         }
     }
 }
