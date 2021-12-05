@@ -4,7 +4,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.view.MenuItem
 import android.widget.EditText
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -26,7 +25,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var drawerToggle: ActionBarDrawerToggle
     private lateinit var drawerLayout: DrawerLayout
-    private lateinit var selectedMenuItem: MenuItem
 
     private val navDrawerUpcomingIndex = 0
     private val navDrawerInboxIndex = 1
@@ -69,7 +67,13 @@ class MainActivity : AppCompatActivity() {
         super.onRestart()
         // refresh the list of tasks when returning to the activity
         fragment.loadItemsInBackground()
+        title = currentTitle
         updateNavDrawerProjects()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        currentTitle = title.toString()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean =
@@ -85,6 +89,12 @@ class MainActivity : AppCompatActivity() {
     companion object {
         // use the same database object throughout the app
         lateinit var database: KTodoDatabase
+        private lateinit var currentTitle: String
+        fun updateProjectName(from: String, to: String) {
+            if (currentTitle == from && currentTitle != to) {
+                currentTitle = to
+            }
+        }
     }
 
     /**

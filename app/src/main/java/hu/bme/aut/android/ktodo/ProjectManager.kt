@@ -22,7 +22,7 @@ class ProjectManager : AppCompatActivity(), ProjectAdapter.ProjectItemClickListe
         super.onCreate(savedInstanceState)
         binding = ActivityProjectManagerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        title = "Projects"
+        title = getString(R.string.project)
         database = MainActivity.database
         initRecyclerView()
     }
@@ -73,13 +73,13 @@ class ProjectManager : AppCompatActivity(), ProjectAdapter.ProjectItemClickListe
             .setView(et)
             .setPositiveButton(R.string.button_ok) { _, _ ->
                 thread {
+                    MainActivity.updateProjectName(item.name, et.text.toString())
                     item.name = et.text.toString()
                     item.modified = LocalDateTime.now()
                     database.projectItemDao().update(item)
                     runOnUiThread {
                         projectAdapter.update(item)
                     }
-                    // TODO: update gui
                 }
             }
             .setNegativeButton(R.string.button_cancel, null)
