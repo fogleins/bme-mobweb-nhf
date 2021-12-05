@@ -8,8 +8,8 @@ import android.view.LayoutInflater
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import hu.bme.aut.android.ktodo.MainActivity
 import hu.bme.aut.android.ktodo.R
-import hu.bme.aut.android.ktodo.data.KTodoDatabase
 import hu.bme.aut.android.ktodo.data.project.ProjectItem
 import hu.bme.aut.android.ktodo.data.todo.TodoItem
 import hu.bme.aut.android.ktodo.databinding.DialogAddTodoBinding
@@ -131,7 +131,7 @@ class TodoPropertiesDialogFragment(
 
     fun refreshProjects() {
         thread {
-            projects = KTodoDatabase.getDatabase(requireContext()).projectItemDao().getProjects()
+            projects = MainActivity.database.projectItemDao().getProjects()
             // dummy for default value in the spinner
             (projects as MutableList).add(0, ProjectItem(name = "Inbox"))
         }

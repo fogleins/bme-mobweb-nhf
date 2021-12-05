@@ -22,12 +22,15 @@ import kotlin.concurrent.thread
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var database: KTodoDatabase
     private lateinit var fragment: MainListViewFragment
 
     private lateinit var drawerToggle: ActionBarDrawerToggle
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var selectedMenuItem: MenuItem
+
+    private val navDrawerUpcomingIndex = 0
+    private val navDrawerInboxIndex = 1
+    private val navDrawerSubmenuIndex = 4
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,7 +76,7 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             return@setNavigationItemSelectedListener true
         }
-        binding.navList.menu.getItem(0).setOnMenuItemClickListener {
+        binding.navList.menu.getItem(navDrawerUpcomingIndex).setOnMenuItemClickListener {
             if (fragment.listViewType == ListViewType.UPCOMING) {
                 closeDrawer()
                 return@setOnMenuItemClickListener false
@@ -81,6 +84,19 @@ class MainActivity : AppCompatActivity() {
             val fragmentTransaction = supportFragmentManager.beginTransaction()
             fragmentTransaction.remove(fragment)
             fragment = MainListViewFragment(ListViewType.UPCOMING)
+            fragmentTransaction.add(binding.mainContent.id, fragment)
+            fragmentTransaction.commit()
+            closeDrawer()
+            return@setOnMenuItemClickListener true
+        }
+        binding.navList.menu.getItem(navDrawerInboxIndex).setOnMenuItemClickListener {
+            if (fragment.listViewType == ListViewType.INBOX) {
+                closeDrawer()
+                return@setOnMenuItemClickListener false
+            }
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            fragmentTransaction.remove(fragment)
+            fragment = MainListViewFragment(ListViewType.INBOX)
             fragmentTransaction.add(binding.mainContent.id, fragment)
             fragmentTransaction.commit()
             closeDrawer()
@@ -112,6 +128,11 @@ class MainActivity : AppCompatActivity() {
         } else super.onBackPressed()
     }
 
+    companion object {
+        // use the same database object throughout the app
+        lateinit var database: KTodoDatabase
+    }
+
     /**
      * Displays a text input dialog and adds a new project.
      */
@@ -128,6 +149,10 @@ class MainActivity : AppCompatActivity() {
                             name = et.text.toString()
                         )
                     )
+                    runOnUiThread {
+                        binding.navList.menu.getItem(navDrawerSubmenuIndex).subMenu.clear()
+                    }
+                    populateNavDrawerWithProjectNames()
                 }
             }
             .setNegativeButton(R.string.button_cancel, null)
@@ -141,21 +166,8 @@ class MainActivity : AppCompatActivity() {
         // update list of projects in the nav drawer
         thread {
             val projects = database.projectItemDao().getProjects()
-            val projectsMenu = binding.navList.menu.getItem(3).subMenu
+            val projectsMenu = binding.navList.menu.getItem(navDrawerSubmenuIndex).subMenu
             runOnUiThread {
-                projectsMenu.add(getString(R.string.project_default_inbox)).setOnMenuItemClickListener {
-                    if (fragment.listViewType == ListViewType.INBOX) {
-                        closeDrawer()
-                        return@setOnMenuItemClickListener false
-                    }
-                    val fragmentTransaction = supportFragmentManager.beginTransaction()
-                    fragmentTransaction.remove(fragment)
-                    fragment = MainListViewFragment(ListViewType.INBOX)
-                    fragmentTransaction.add(binding.mainContent.id, fragment)
-                    fragmentTransaction.commit()
-                    closeDrawer()
-                    return@setOnMenuItemClickListener true
-                }
                 for (project in projects) {
                     val menuItem = projectsMenu.add(project.name)
                     menuItem.setOnMenuItemClickListener {
@@ -179,9 +191,9 @@ class MainActivity : AppCompatActivity() {
     private fun updateNavDrawerProjects() {
         thread {
             val projects = database.projectItemDao().getProjects()
-            val projectsMenu = binding.navList.menu.getItem(3).subMenu
+            val projectsMenu = binding.navList.menu.getItem(navDrawerSubmenuIndex).subMenu
             projects.forEachIndexed { index, projectItem ->
-                val menuItem = projectsMenu.getItem(index + 1)
+                val menuItem = projectsMenu.getItem(index)
                 if (menuItem.title != projectItem.name) {
                     runOnUiThread {
                         menuItem.title = projectItem.name

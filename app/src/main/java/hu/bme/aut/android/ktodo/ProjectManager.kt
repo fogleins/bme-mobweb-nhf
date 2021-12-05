@@ -23,7 +23,7 @@ class ProjectManager : AppCompatActivity(), ProjectAdapter.ProjectItemClickListe
         binding = ActivityProjectManagerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         title = "Projects"
-        database = KTodoDatabase.getDatabase(applicationContext)
+        database = MainActivity.database
         initRecyclerView()
     }
 

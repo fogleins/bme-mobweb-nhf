@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import hu.bme.aut.android.ktodo.MainActivity
 import hu.bme.aut.android.ktodo.R
-import hu.bme.aut.android.ktodo.data.KTodoDatabase
 import hu.bme.aut.android.ktodo.data.todo.TodoItem
 import hu.bme.aut.android.ktodo.databinding.ItemTodoListBinding
 import hu.bme.aut.android.ktodo.fragment.MainListViewFragment
@@ -25,14 +25,14 @@ class TodoAdapter(private val listener: TodoItemClickListener) :
         val todo = items[position]
         holder.binding.taskTitle.text = todo.title
         holder.binding.taskDescription.text = todo.description
-        holder.binding.taskDueDate.text = todo.dueDate.toString()
+        holder.binding.taskDueDate.text = if (todo.dueDate.toString() != "null") todo.dueDate.toString() else "-"
         val activity = (listener as? MainListViewFragment ?: throw RuntimeException("activity is null")).activity
         val context = listener.context
         // separate thread is needed for getting the project's name
         thread {
             val projectName = if (todo.project != null) todo.project.let {
                 // TODO: menjen át a main activitybe?
-                KTodoDatabase.getDatabase(context!!).projectItemDao().getProjectName(it!!)
+                MainActivity.database.projectItemDao().getProjectName(it!!)
             } else "Inbox"
             activity!!.runOnUiThread {
                 holder.binding.taskProject.text = projectName

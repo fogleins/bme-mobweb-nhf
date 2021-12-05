@@ -63,7 +63,7 @@ class MainListViewFragment(
                 TodoPropertiesDialogFragment.TAG
             )
         }
-        database = KTodoDatabase.getDatabase(context!!)
+        database = MainActivity.database
         initRecyclerView()
     }
 

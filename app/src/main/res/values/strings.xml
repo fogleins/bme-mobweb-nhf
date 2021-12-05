@@ -27,7 +27,7 @@
     <string name="button_undo">Undo</string>
     <string name="project_default_inbox">Inbox</string>
     <string name="upcoming">Upcoming</string>
-    <string name="Inbox">Inbox</string>
+    <string name="inbox">Inbox</string>
     <string name="nav_item_add_project">Add project</string>
     <string name="nav_item_manage_projects">Manage projects</string>
     <string name="nav_item_projects">Projects</string>
