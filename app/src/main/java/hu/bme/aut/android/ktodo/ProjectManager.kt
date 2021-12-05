@@ -73,7 +73,6 @@ class ProjectManager : AppCompatActivity(), ProjectAdapter.ProjectItemClickListe
             .setView(et)
             .setPositiveButton(R.string.button_ok) { _, _ ->
                 thread {
-                    MainActivity.updateProjectName(item.name, et.text.toString())
                     item.name = et.text.toString()
                     item.modified = LocalDateTime.now()
                     database.projectItemDao().update(item)

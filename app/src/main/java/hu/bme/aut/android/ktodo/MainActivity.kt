@@ -67,13 +67,7 @@ class MainActivity : AppCompatActivity() {
         super.onRestart()
         // refresh the list of tasks when returning to the activity
         fragment.loadItemsInBackground()
-        title = currentTitle
         updateNavDrawerProjects()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        currentTitle = title.toString()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean =
@@ -89,12 +83,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
         // use the same database object throughout the app
         lateinit var database: KTodoDatabase
-        private lateinit var currentTitle: String
-        fun updateProjectName(from: String, to: String) {
-            if (currentTitle == from && currentTitle != to) {
-                currentTitle = to
-            }
-        }
     }
 
     /**
@@ -141,7 +129,9 @@ class MainActivity : AppCompatActivity() {
                         fragmentTransaction.add(binding.mainContent.id, fragment)
                         fragmentTransaction.commit()
                         closeDrawer()
-                        return@setOnMenuItemClickListener true
+                        title = menuItem.title
+                        project.name = title.toString()
+                    return@setOnMenuItemClickListener true
                     }
                 }
             }
