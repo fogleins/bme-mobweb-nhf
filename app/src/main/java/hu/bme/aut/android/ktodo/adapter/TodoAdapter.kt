@@ -1,13 +1,17 @@
 package hu.bme.aut.android.ktodo.adapter
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.widget.CompoundButtonCompat
 import androidx.recyclerview.widget.RecyclerView
 import hu.bme.aut.android.ktodo.MainActivity
 import hu.bme.aut.android.ktodo.R
 import hu.bme.aut.android.ktodo.data.todo.TodoItem
 import hu.bme.aut.android.ktodo.databinding.ItemTodoListBinding
+import hu.bme.aut.android.ktodo.enumeration.TaskPriority
 import hu.bme.aut.android.ktodo.fragment.MainListViewFragment
 import java.time.LocalDate
 import kotlin.concurrent.thread
@@ -55,6 +59,13 @@ class TodoAdapter(private val listener: TodoItemClickListener) :
         }
 
         holder.binding.isCompleted.isChecked = todo.completed
+        val color = when(todo.priority) {
+            TaskPriority.HIGH -> ColorStateList.valueOf(Color.parseColor("#EE543A"))
+            TaskPriority.MEDIUM -> ColorStateList.valueOf(Color.parseColor("#FCB941"))
+            TaskPriority.LOW -> ColorStateList.valueOf(Color.parseColor("#2C82C9"))
+            TaskPriority.NONE -> ColorStateList.valueOf(Color.GRAY)
+        }
+        CompoundButtonCompat.setButtonTintList(holder.binding.isCompleted, color)
         holder.binding.isCompleted.setOnCheckedChangeListener { buttonView, isChecked ->
             holder.binding.isCompleted.isChecked = todo.completed
             listener.onTodoCompleted(todo)

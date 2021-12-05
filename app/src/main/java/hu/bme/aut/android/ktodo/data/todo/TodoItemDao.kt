@@ -7,16 +7,16 @@ interface TodoItemDao {
     /**
      * Queries the upcoming tasks.
      */
-    @Query("SELECT * FROM tasks WHERE due_date IS NOT NULL AND due_date < date('now', '+30 days') AND completed = 0 ORDER BY due_date, priority, title")
+    @Query("SELECT * FROM tasks WHERE due_date IS NOT NULL AND due_date < date('now', '+30 days') AND completed = 0 ORDER BY due_date ASC, priority DESC, title ASC")
     fun getUpcoming(): List<TodoItem>
 
-    @Query("SELECT * FROM tasks WHERE project_id IS NULL AND completed = 0 ORDER BY due_date, priority, title")
+    @Query("SELECT * FROM tasks WHERE project_id IS NULL AND completed = 0 ORDER BY due_date ASC, priority DESC, title ASC")
     fun getInbox(): List<TodoItem>
 
     /**
      * Gets all tasks from the given project.
      */
-    @Query("SELECT * FROM tasks WHERE project_id = :projectId AND completed = 0 ORDER BY due_date, priority, title")
+    @Query("SELECT * FROM tasks WHERE project_id = :projectId AND completed = 0 ORDER BY due_date ASC, priority DESC, title ASC")
     fun getTasksInProject(projectId: Long): List<TodoItem>
 
     @Query("SELECT completed_at, DATETIME(completed_at, 'unixepoch') AS comp, COUNT(*) as count FROM tasks " +

@@ -104,6 +104,7 @@ class TodoPropertiesDialogFragment(
                         item.title = binding.etTitle.text.toString()
                         item.description = binding.etDescription.text.toString()
                         item.project = (binding.spProject.selectedItem as ProjectItem).id
+                        val prevPriority = item.priority
                         item.priority = TaskPriority.getByOrdinal(binding.sbPriority.progress)
                             ?: TaskPriority.NONE
                         val prevDueDate = item.dueDate
@@ -111,8 +112,8 @@ class TodoPropertiesDialogFragment(
                             if (binding.etDueDate.text.toString().isNotBlank()) LocalDate.parse(
                                 binding.etDueDate.text
                             ) else null
-                        MainListViewFragment.dateUpdated =
-                            prevDueDate == item.dueDate || item.dueDate == null
+                        MainListViewFragment.shouldUpdateEntireList =
+                            prevDueDate == item.dueDate || item.dueDate == null || item.priority != prevPriority
                         listener.onTodoEdited(item)
                     }
                 }
