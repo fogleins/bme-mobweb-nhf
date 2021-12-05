@@ -16,6 +16,7 @@ data class TodoItem(
     @ColumnInfo(name = "project_id") var project: Long?,
     @ColumnInfo(name = "due_date") var dueDate: LocalDate?,
     @ColumnInfo(name = "completed") var completed: Boolean,
+    @ColumnInfo(name = "completed_at") var completedAt: LocalDateTime? = null,
     @ColumnInfo(name = "created") var created: LocalDateTime = LocalDateTime.now(),
     @ColumnInfo(name = "modified") var modified: LocalDateTime = LocalDateTime.now()
 ) {

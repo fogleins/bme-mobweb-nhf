@@ -10,6 +10,7 @@ import hu.bme.aut.android.ktodo.adapter.ProjectAdapter
 import hu.bme.aut.android.ktodo.data.KTodoDatabase
 import hu.bme.aut.android.ktodo.data.project.ProjectItem
 import hu.bme.aut.android.ktodo.databinding.ActivityProjectManagerBinding
+import java.time.LocalDateTime
 import kotlin.concurrent.thread
 
 class ProjectManager : AppCompatActivity(), ProjectAdapter.ProjectItemClickListener {
@@ -73,6 +74,7 @@ class ProjectManager : AppCompatActivity(), ProjectAdapter.ProjectItemClickListe
             .setPositiveButton(R.string.button_ok) { _, _ ->
                 thread {
                     item.name = et.text.toString()
+                    item.modified = LocalDateTime.now()
                     database.projectItemDao().update(item)
                     runOnUiThread {
                         projectAdapter.update(item)

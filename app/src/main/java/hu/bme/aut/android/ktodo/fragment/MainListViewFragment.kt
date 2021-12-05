@@ -18,6 +18,7 @@ import hu.bme.aut.android.ktodo.data.project.ProjectItem
 import hu.bme.aut.android.ktodo.data.todo.TodoItem
 import hu.bme.aut.android.ktodo.databinding.FragmentMainListViewBinding
 import hu.bme.aut.android.ktodo.enumeration.ListViewType
+import java.time.LocalDateTime
 import java.util.*
 import kotlin.concurrent.schedule
 import kotlin.concurrent.thread
@@ -83,6 +84,9 @@ class MainListViewFragment(
     override fun onTodoCompleted(item: TodoItem) {
         // todo: snackbar undo?
         thread {
+            val now = LocalDateTime.now()
+            item.completedAt = now
+            item.modified = now
             database.todoItemDao().update(item)
             activity.runOnUiThread {
                 adapter.updateTodo(item)
@@ -179,6 +183,7 @@ class MainListViewFragment(
      */
     override fun onTodoEdited(editedItem: TodoItem) {
         thread {
+            editedItem.modified = LocalDateTime.now()
             database.todoItemDao().update(editedItem)
             var items: List<TodoItem>? = null
             var update = false
