@@ -49,6 +49,7 @@ class TodoPropertiesDialogFragment(
                 calendar.set(Calendar.MONTH, month)
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
                 binding.etDueDate.setText(simpleDateFormat.format(calendar.time))
+                binding.btnDueDateRemove.isEnabled = true
             }
             datepicker.show()
         }
@@ -57,6 +58,10 @@ class TodoPropertiesDialogFragment(
             R.layout.support_simple_spinner_dropdown_item,
             projects
         )
+        binding.btnDueDateRemove.setOnClickListener {
+            binding.etDueDate.setText("")
+            binding.btnDueDateRemove.isEnabled = false
+        }
 
         // if editing an existing item
         if (item != null) {
@@ -80,7 +85,9 @@ class TodoPropertiesDialogFragment(
                 )
                 binding.etDueDate.setText(simpleDateFormat.format(calendar.time))
             }
-
+            binding.btnDueDateRemove.isEnabled = binding.etDueDate.text.toString().isNotBlank()
+        } else {
+            binding.btnDueDateRemove.isEnabled = false
         }
 
         return AlertDialog.Builder(requireContext())
@@ -104,7 +111,8 @@ class TodoPropertiesDialogFragment(
                             if (binding.etDueDate.text.toString().isNotBlank()) LocalDate.parse(
                                 binding.etDueDate.text
                             ) else null
-                        MainListViewFragment.dateUpdated = prevDueDate == item.dueDate
+                        MainListViewFragment.dateUpdated =
+                            prevDueDate == item.dueDate || item.dueDate == null
                         listener.onTodoEdited(item)
                     }
                 }
