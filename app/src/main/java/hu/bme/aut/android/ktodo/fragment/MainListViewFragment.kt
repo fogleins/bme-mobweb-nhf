@@ -1,10 +1,13 @@
 package hu.bme.aut.android.ktodo.fragment
 
+import android.graphics.*
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -158,16 +161,112 @@ class MainListViewFragment(
         loadItemsInBackground()
 
         // add swipe actions + a snackbar to undo the deletion
-        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(
                 recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
             ) = false
 
+            val paint = Paint()
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val index = viewHolder.adapterPosition
                 val toDelete = adapter.items[index]
                 onItemRemoved(toDelete)
+                paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+            }
+
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                super.onChildDraw(
+                    c,
+                    recyclerView,
+                    viewHolder,
+                    dX,
+                    dY,
+                    actionState,
+                    isCurrentlyActive
+                )
+
+                val deleteDrawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_swipe_to_delete_24, null)
+                val mBackground = ColorDrawable()
+                val backgroundColor = Color.parseColor("#b80f0a")
+                val intrinsicWidth = deleteDrawable!!.intrinsicWidth;
+                val intrinsicHeight = deleteDrawable.intrinsicHeight
+
+                val itemView = viewHolder.itemView
+                val itemHeight = itemView.height
+
+                val isCancelled = dX == 0f && !isCurrentlyActive
+
+                if (isCancelled) {
+                    clearCanvas(
+                        c, itemView.right + dX,
+                        itemView.top.toFloat(), itemView.right.toFloat(), itemView.bottom.toFloat()
+                    )
+                    super.onChildDraw(
+                        c,
+                        recyclerView,
+                        viewHolder,
+                        dX,
+                        dY,
+                        actionState,
+                        isCurrentlyActive
+                    )
+                    return
+                }
+
+                mBackground.color = backgroundColor
+                mBackground.setBounds(
+                    itemView.right + dX.toInt(),
+                    itemView.top,
+                    itemView.right,
+                    itemView.bottom
+                )
+                mBackground.draw(c)
+
+                val deleteIconTop: Int = itemView.top + (itemHeight - intrinsicHeight) / 2
+                val deleteIconMargin: Int = (itemHeight - intrinsicHeight) / 2
+                val deleteIconLeft: Int = itemView.right - deleteIconMargin - intrinsicWidth
+                val deleteIconRight = itemView.right - deleteIconMargin
+                val deleteIconBottom: Int = deleteIconTop + intrinsicHeight
+
+
+                deleteDrawable.setBounds(
+                    deleteIconLeft,
+                    deleteIconTop,
+                    deleteIconRight,
+                    deleteIconBottom
+                )
+                deleteDrawable.draw(c)
+
+                super.onChildDraw(
+                    c,
+                    recyclerView,
+                    viewHolder,
+                    dX,
+                    dY,
+                    actionState,
+                    isCurrentlyActive
+                )
+
+
+            }
+
+            private fun clearCanvas(
+                c: Canvas,
+                left: Float,
+                top: Float,
+                right: Float,
+                bottom: Float
+            ) {
+                c.drawRect(left, top, right, bottom, paint)
             }
         }).attachToRecyclerView(binding.rvTodo)
     }
