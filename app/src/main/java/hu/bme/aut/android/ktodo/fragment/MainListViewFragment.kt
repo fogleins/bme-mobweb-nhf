@@ -69,6 +69,7 @@ class MainListViewFragment(
 
     companion object {
         const val TAG = "MainListViewFragment"
+        var dateUpdated = false
     }
 
     /**
@@ -204,16 +205,25 @@ class MainListViewFragment(
             database.todoItemDao().update(editedItem)
             var items: List<TodoItem>? = null
             var update = false
-            if (listViewType == ListViewType.INBOX) {
-                items = database.todoItemDao().getInbox()
-                update = true
-            } else if (listViewType == ListViewType.PROJECT) {
-                items = database.todoItemDao().getTasksInProject(project?.id!!)
-                update = true
+            if (dateUpdated) {
+                when (listViewType) {
+                    ListViewType.INBOX -> {
+                        items = database.todoItemDao().getInbox()
+                        update = true
+                    }
+                    ListViewType.PROJECT -> {
+                        items = database.todoItemDao().getTasksInProject(project?.id!!)
+                        update = true
+                    }
+                    else -> {
+                        items = database.todoItemDao().getUpcoming()
+                        update = true
+                    }
+                }
             }
             activity.runOnUiThread {
-                if (update) {
-                    adapter.update(items!!)
+                if ((update || dateUpdated) && items != null) {
+                    adapter.update(items)
                 }
                 adapter.updateTodo(editedItem)
             }
