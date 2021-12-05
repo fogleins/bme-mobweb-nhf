@@ -14,6 +14,7 @@ import hu.bme.aut.android.ktodo.MainActivity
 import hu.bme.aut.android.ktodo.R
 import hu.bme.aut.android.ktodo.adapter.TodoAdapter
 import hu.bme.aut.android.ktodo.data.KTodoDatabase
+import hu.bme.aut.android.ktodo.data.project.ProjectItem
 import hu.bme.aut.android.ktodo.data.todo.TodoItem
 import hu.bme.aut.android.ktodo.databinding.FragmentMainListViewBinding
 import hu.bme.aut.android.ktodo.enumeration.ListViewType
@@ -22,10 +23,13 @@ import kotlin.concurrent.schedule
 import kotlin.concurrent.thread
 
 class MainListViewFragment(
-    private val listViewType: ListViewType = ListViewType.UPCOMING,
-    private val projectName: String? = null
+    listViewType: ListViewType = ListViewType.UPCOMING,
+    private val project: ProjectItem? = null
 ) : Fragment(), TodoAdapter.TodoItemClickListener,
     TodoPropertiesDialogFragment.TodoPropertiesDialogListener {
+
+    var listViewType = listViewType
+        private set
 
     private lateinit var binding: FragmentMainListViewBinding
 
@@ -49,7 +53,7 @@ class MainListViewFragment(
         when (listViewType) {
             ListViewType.UPCOMING -> activity.title = "Upcoming"
             ListViewType.INBOX -> activity.title = "Inbox"
-            ListViewType.PROJECT -> activity.title = projectName
+            ListViewType.PROJECT -> activity.title = project?.name ?: "Project"
         }
 
         binding.addTask.setOnClickListener {
@@ -150,8 +154,8 @@ class MainListViewFragment(
         thread {
             val items = when (listViewType) {
                 ListViewType.UPCOMING -> database.todoItemDao().getUpcoming()
-                ListViewType.INBOX -> TODO()
-                ListViewType.PROJECT -> TODO()
+                ListViewType.INBOX -> database.todoItemDao().getInbox()
+                ListViewType.PROJECT -> database.todoItemDao().getTasksInProject(project?.id!!)
             }
             activity.runOnUiThread {
                 adapter.update(items)
@@ -176,7 +180,19 @@ class MainListViewFragment(
     override fun onTodoEdited(editedItem: TodoItem) {
         thread {
             database.todoItemDao().update(editedItem)
+            var items: List<TodoItem>? = null
+            var update = false
+            if (listViewType == ListViewType.INBOX) {
+                items = database.todoItemDao().getInbox()
+                update = true
+            } else if (listViewType == ListViewType.PROJECT) {
+                items = database.todoItemDao().getTasksInProject(project?.id!!)
+                update = true
+            }
             activity.runOnUiThread {
+                if (update) {
+                    adapter.update(items!!)
+                }
                 adapter.updateTodo(editedItem)
             }
         }

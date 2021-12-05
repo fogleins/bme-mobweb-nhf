@@ -14,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import hu.bme.aut.android.ktodo.data.KTodoDatabase
 import hu.bme.aut.android.ktodo.data.project.ProjectItem
 import hu.bme.aut.android.ktodo.databinding.ActivityMainBinding
+import hu.bme.aut.android.ktodo.enumeration.ListViewType
 import hu.bme.aut.android.ktodo.fragment.MainListViewFragment
 import java.util.*
 import kotlin.concurrent.thread
@@ -72,6 +73,19 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             return@setNavigationItemSelectedListener true
         }
+        binding.navList.menu.getItem(0).setOnMenuItemClickListener {
+            if (fragment.listViewType == ListViewType.UPCOMING) {
+                closeDrawer()
+                return@setOnMenuItemClickListener false
+            }
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            fragmentTransaction.remove(fragment)
+            fragment = MainListViewFragment(ListViewType.UPCOMING)
+            fragmentTransaction.add(binding.mainContent.id, fragment)
+            fragmentTransaction.commit()
+            closeDrawer()
+            return@setOnMenuItemClickListener true
+        }
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         // show the upcoming view by default
         fragment = MainListViewFragment()
@@ -121,7 +135,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Adds all projects
+     * Adds all projects to the navigation drawer
      */
     private fun populateNavDrawerWithProjectNames() {
         // update list of projects in the nav drawer
@@ -129,10 +143,30 @@ class MainActivity : AppCompatActivity() {
             val projects = database.projectItemDao().getProjects()
             val projectsMenu = binding.navList.menu.getItem(3).subMenu
             runOnUiThread {
-                projectsMenu.add(getString(R.string.project_default_inbox))
+                projectsMenu.add(getString(R.string.project_default_inbox)).setOnMenuItemClickListener {
+                    if (fragment.listViewType == ListViewType.INBOX) {
+                        closeDrawer()
+                        return@setOnMenuItemClickListener false
+                    }
+                    val fragmentTransaction = supportFragmentManager.beginTransaction()
+                    fragmentTransaction.remove(fragment)
+                    fragment = MainListViewFragment(ListViewType.INBOX)
+                    fragmentTransaction.add(binding.mainContent.id, fragment)
+                    fragmentTransaction.commit()
+                    closeDrawer()
+                    return@setOnMenuItemClickListener true
+                }
                 for (project in projects) {
-                    projectsMenu.add(project.name)
-                    // todo: add onClickListener for the menu item
+                    val menuItem = projectsMenu.add(project.name)
+                    menuItem.setOnMenuItemClickListener {
+                        val fragmentTransaction = supportFragmentManager.beginTransaction()
+                        fragmentTransaction.remove(fragment)
+                        fragment = MainListViewFragment(ListViewType.PROJECT, project)
+                        fragmentTransaction.add(binding.mainContent.id, fragment)
+                        fragmentTransaction.commit()
+                        closeDrawer()
+                        return@setOnMenuItemClickListener true
+                    }
                 }
             }
         }
@@ -147,13 +181,19 @@ class MainActivity : AppCompatActivity() {
             val projects = database.projectItemDao().getProjects()
             val projectsMenu = binding.navList.menu.getItem(3).subMenu
             projects.forEachIndexed { index, projectItem ->
-                val menuItem = projectsMenu.getItem(index)
+                val menuItem = projectsMenu.getItem(index + 1)
                 if (menuItem.title != projectItem.name) {
                     runOnUiThread {
                         menuItem.title = projectItem.name
                     }
                 }
             }
+        }
+    }
+
+    private fun closeDrawer() {
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
         }
     }
 }
