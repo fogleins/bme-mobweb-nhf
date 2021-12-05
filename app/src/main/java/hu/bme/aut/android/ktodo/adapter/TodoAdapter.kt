@@ -31,7 +31,6 @@ class TodoAdapter(private val listener: TodoItemClickListener) :
         // separate thread is needed for getting the project's name
         thread {
             val projectName = if (todo.project != null) todo.project.let {
-                // TODO: menjen át a main activitybe?
                 MainActivity.database.projectItemDao().getProjectName(it!!)
             } else "Inbox"
             activity!!.runOnUiThread {
