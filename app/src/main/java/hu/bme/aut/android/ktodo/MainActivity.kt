@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         // show the upcoming view by default
         fragment = MainListViewFragment()
+        fragmentTransaction.setCustomAnimations(fadeInAnimation, fadeOutAnimation)
         fragmentTransaction.add(binding.mainContent.id, fragment)
         fragmentTransaction.commit()
 
@@ -83,6 +84,8 @@ class MainActivity : AppCompatActivity() {
     companion object {
         // use the same database object throughout the app
         lateinit var database: KTodoDatabase
+        var fadeInAnimation = R.anim.anim_fade_in
+        var fadeOutAnimation = R.anim.anim_fade_out
     }
 
     /**
@@ -125,6 +128,7 @@ class MainActivity : AppCompatActivity() {
                     menuItem.setOnMenuItemClickListener {
                         val fragmentTransaction = supportFragmentManager.beginTransaction()
                         fragmentTransaction.remove(fragment)
+                        fragmentTransaction.setCustomAnimations(fadeInAnimation, fadeOutAnimation)
                         fragment = MainListViewFragment(ListViewType.PROJECT, project)
                         fragmentTransaction.add(binding.mainContent.id, fragment)
                         fragmentTransaction.commit()
@@ -183,6 +187,7 @@ class MainActivity : AppCompatActivity() {
             val fragmentTransaction = supportFragmentManager.beginTransaction()
             fragmentTransaction.remove(fragment)
             fragment = MainListViewFragment(ListViewType.UPCOMING)
+            fragmentTransaction.setCustomAnimations(fadeInAnimation, fadeOutAnimation)
             fragmentTransaction.add(binding.mainContent.id, fragment)
             fragmentTransaction.commit()
             closeDrawer()
@@ -196,6 +201,7 @@ class MainActivity : AppCompatActivity() {
             val fragmentTransaction = supportFragmentManager.beginTransaction()
             fragmentTransaction.remove(fragment)
             fragment = MainListViewFragment(ListViewType.INBOX)
+            fragmentTransaction.setCustomAnimations(fadeInAnimation, fadeOutAnimation)
             fragmentTransaction.add(binding.mainContent.id, fragment)
             fragmentTransaction.commit()
             closeDrawer()
