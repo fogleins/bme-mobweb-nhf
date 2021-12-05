@@ -57,7 +57,7 @@ class TodoAdapter(private val listener: TodoItemClickListener) :
 
         holder.binding.isCompleted.isChecked = todo.completed
         holder.binding.isCompleted.setOnCheckedChangeListener { buttonView, isChecked ->
-            todo.completed = isChecked
+            holder.binding.isCompleted.isChecked = todo.completed
             listener.onTodoCompleted(todo)
         }
 

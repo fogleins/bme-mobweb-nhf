@@ -37,4 +37,5 @@
     <string name="stats_30_days">30 days</string>
     <string name="stats_productivity_overview">Productivity overview</string>
     <string name="chart_description">Number of tasks completed per day</string>
+    <string name="snackbar_todo_completed_message">%1$s completed</string>
 </resources>

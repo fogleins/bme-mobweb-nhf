@@ -82,16 +82,35 @@ class MainListViewFragment(
     }
 
     override fun onTodoCompleted(item: TodoItem) {
-        // todo: snackbar undo?
-        thread {
-            val now = LocalDateTime.now()
-            item.completedAt = now
-            item.modified = now
-            database.todoItemDao().update(item)
-            activity.runOnUiThread {
-                adapter.updateTodo(item)
-                // if a task is marked as complete, we remove it from the list of tasks
-                adapter.removeTodo(item)
+        var threadCompleteEnabled = true
+        val index = adapter.items.indexOf(item)
+        adapter.updateTodo(item)
+        adapter.removeTodo(item)
+        val now = LocalDateTime.now()
+
+        val snackbar = Snackbar.make(
+            binding.rvTodo,
+            activity.applicationContext.getString(
+                R.string.snackbar_todo_completed_message,
+                item.title
+            ),
+            Snackbar.LENGTH_LONG
+        ).setAction(R.string.button_undo) {
+            adapter.items.add(index, item)
+            adapter.notifyItemInserted(index)
+            threadCompleteEnabled = false
+        }
+        val snackbarDuration = snackbar.duration
+        snackbar.show()
+
+        Timer().schedule(if (snackbarDuration == Snackbar.LENGTH_LONG) 2750 else 1500) {
+            thread {
+                if (threadCompleteEnabled) {
+                    item.completedAt = now
+                    item.completed = true
+                    item.modified = now
+                    database.todoItemDao().update(item)
+                }
             }
         }
     }
@@ -122,9 +141,7 @@ class MainListViewFragment(
                     database.todoItemDao().delete(item)
             }
         }
-
     }
-
 
     private fun initRecyclerView() {
         adapter = TodoAdapter(this)
