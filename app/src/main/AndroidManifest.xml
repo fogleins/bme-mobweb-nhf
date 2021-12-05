@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Ktodo">
         <activity
+            android:name=".StatsActivity"
+            android:exported="true" />
+        <activity
             android:name=".ProjectManager"
             android:exported="true" />
         <activity

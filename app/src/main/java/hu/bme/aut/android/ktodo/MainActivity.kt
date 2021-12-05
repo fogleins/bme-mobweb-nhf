@@ -70,7 +70,8 @@ class MainActivity : AppCompatActivity() {
                     startActivity(intent)
                 }
                 "Stats" -> {
-                    Log.d("statsClickListener", "works")
+                    val intent = Intent(this, StatsActivity::class.java)
+                    startActivity(intent)
                 }
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
