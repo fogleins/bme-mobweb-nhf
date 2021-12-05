@@ -63,8 +63,8 @@ class MainActivity : AppCompatActivity() {
         populateNavDrawerWithProjectNames()
     }
 
-    override fun onRestart() {
-        super.onRestart()
+    override fun onResume() {
+        super.onResume()
         // refresh the list of tasks when returning to the activity
         fragment.loadItemsInBackground()
         updateNavDrawerProjects()
@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity() {
                         closeDrawer()
                         title = menuItem.title
                         project.name = title.toString()
-                    return@setOnMenuItemClickListener true
+                        return@setOnMenuItemClickListener true
                     }
                 }
             }
@@ -146,11 +146,19 @@ class MainActivity : AppCompatActivity() {
         thread {
             val projects = database.projectItemDao().getProjects()
             val projectsMenu = binding.navList.menu.getItem(navDrawerSubmenuIndex).subMenu
+            if (projects.isEmpty() || projectsMenu.size() == 0) return@thread
             projects.forEachIndexed { index, projectItem ->
                 val menuItem = projectsMenu.getItem(index)
                 if (menuItem.title != projectItem.name) {
                     runOnUiThread {
                         menuItem.title = projectItem.name
+                    }
+                }
+            }
+            if (projectsMenu.size() > projects.size) {
+                for (i in projects.size until projectsMenu.size()) {
+                    runOnUiThread {
+                        projectsMenu.getItem(i).isVisible = false
                     }
                 }
             }
