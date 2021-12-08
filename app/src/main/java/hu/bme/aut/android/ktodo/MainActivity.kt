@@ -129,21 +129,24 @@ class MainActivity : AppCompatActivity() {
             val projectsMenu = binding.navList.menu.getItem(navDrawerSubmenuIndex).subMenu
             runOnUiThread {
                 for (project in projects) {
-                    val menuItem = projectsMenu.add(project.name)
-                    menuItem.setOnMenuItemClickListener {
-                        val fragmentTransaction = supportFragmentManager.beginTransaction()
-                        fragmentTransaction.remove(fragment)
-                        fragmentTransaction.setCustomAnimations(fadeInAnimation, fadeOutAnimation)
-                        fragment = MainListViewFragment(ListViewType.PROJECT, project)
-                        fragmentTransaction.add(binding.mainContent.id, fragment)
-                        fragmentTransaction.commit()
-                        closeDrawer()
-                        title = menuItem.title
-                        project.name = title.toString()
-                        return@setOnMenuItemClickListener true
-                    }
+                    setNavDrawerItemClickListener(projectsMenu.add(project.name), project)
                 }
             }
+        }
+    }
+
+    private fun setNavDrawerItemClickListener(menuItem: MenuItem, project: ProjectItem) {
+        menuItem.setOnMenuItemClickListener {
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            fragmentTransaction.remove(fragment)
+            fragmentTransaction.setCustomAnimations(fadeInAnimation, fadeOutAnimation)
+            fragment = MainListViewFragment(ListViewType.PROJECT, project)
+            fragmentTransaction.add(binding.mainContent.id, fragment)
+            fragmentTransaction.commit()
+            closeDrawer()
+            title = menuItem.title
+            project.name = title.toString()
+            return@setOnMenuItemClickListener true
         }
     }
 
@@ -168,6 +171,7 @@ class MainActivity : AppCompatActivity() {
                 if (menuItem.title != projectItem.name) {
                     runOnUiThread {
                         menuItem.title = projectItem.name
+                        setNavDrawerItemClickListener(menuItem, projects[index])
                     }
                 }
             }
