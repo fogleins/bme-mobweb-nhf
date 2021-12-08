@@ -39,4 +39,5 @@
     <string name="chart_description">Number of tasks completed per day</string>
     <string name="snackbar_todo_completed_message">%1$s completed</string>
     <string name="unset_date">Unset</string>
+    <string name="warning_project_name_empty">Project name cannot be empty.</string>
 </resources>

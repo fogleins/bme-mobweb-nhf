@@ -43,6 +43,9 @@ class TodoPropertiesDialogFragment(
         val simpleDateFormat = SimpleDateFormat(dateFormat, Locale.forLanguageTag("HU"))
         val calendar: Calendar = Calendar.getInstance()
         val datepicker = DatePickerDialog(requireContext())
+        if (item?.dueDate != null) {
+            datepicker.updateDate(item.dueDate!!.year, item.dueDate!!.monthValue, item.dueDate!!.dayOfMonth)
+        }
         binding.etDueDate.setOnClickListener {
             datepicker.setOnDateSetListener { view, year, month, dayOfMonth ->
                 calendar.set(Calendar.YEAR, year)
@@ -113,7 +116,7 @@ class TodoPropertiesDialogFragment(
                                 binding.etDueDate.text
                             ) else null
                         MainListViewFragment.shouldUpdateEntireList =
-                            prevDueDate == item.dueDate || item.dueDate == null || item.priority != prevPriority
+                            prevDueDate != item.dueDate || item.dueDate == null || item.priority != prevPriority
                         listener.onTodoEdited(item)
                     }
                 }

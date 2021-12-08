@@ -6,6 +6,7 @@ import android.text.InputType
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import hu.bme.aut.android.ktodo.adapter.ProjectAdapter
 import hu.bme.aut.android.ktodo.data.KTodoDatabase
 import hu.bme.aut.android.ktodo.data.project.ProjectItem
@@ -72,13 +73,17 @@ class ProjectManager : AppCompatActivity(), ProjectAdapter.ProjectItemClickListe
             .setTitle(getString(R.string.dialog_title_add_project))
             .setView(et)
             .setPositiveButton(R.string.button_ok) { _, _ ->
-                thread {
-                    item.name = et.text.toString()
-                    item.modified = LocalDateTime.now()
-                    database.projectItemDao().update(item)
-                    runOnUiThread {
-                        projectAdapter.update(item)
+                if (et.text.toString().isNotBlank()) {
+                    thread {
+                        item.name = et.text.toString()
+                        item.modified = LocalDateTime.now()
+                        database.projectItemDao().update(item)
+                        runOnUiThread {
+                            projectAdapter.update(item)
+                        }
                     }
+                } else {
+                    Snackbar.make(binding.root, getString(R.string.warning_project_name_empty), Snackbar.LENGTH_LONG).show()
                 }
             }
             .setNegativeButton(R.string.button_cancel, null)

@@ -10,6 +10,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.snackbar.Snackbar
 import hu.bme.aut.android.ktodo.data.KTodoDatabase
 import hu.bme.aut.android.ktodo.data.project.ProjectItem
 import hu.bme.aut.android.ktodo.databinding.ActivityMainBinding
@@ -99,15 +100,19 @@ class MainActivity : AppCompatActivity() {
             .setView(et)
             .setPositiveButton(R.string.button_ok) { _, _ ->
                 thread {
-                    database.projectItemDao().add(
-                        ProjectItem(
-                            name = et.text.toString()
+                    if (et.text.toString().isNotBlank()) {
+                        database.projectItemDao().add(
+                            ProjectItem(
+                                name = et.text.toString()
+                            )
                         )
-                    )
-                    runOnUiThread {
-                        binding.navList.menu.getItem(navDrawerSubmenuIndex).subMenu.clear()
+                        runOnUiThread {
+                            binding.navList.menu.getItem(navDrawerSubmenuIndex).subMenu.clear()
+                        }
+                        populateNavDrawerWithProjectNames()
+                    } else {
+                        Snackbar.make(binding.root, getString(R.string.warning_project_name_empty), Snackbar.LENGTH_LONG).show()
                     }
-                    populateNavDrawerWithProjectNames()
                 }
             }
             .setNegativeButton(R.string.button_cancel, null)
@@ -150,7 +155,14 @@ class MainActivity : AppCompatActivity() {
         thread {
             val projects = database.projectItemDao().getProjects()
             val projectsMenu = binding.navList.menu.getItem(navDrawerSubmenuIndex).subMenu
-            if (projects.isEmpty() || projectsMenu.size() == 0) return@thread
+            if (projects.isEmpty() || projectsMenu.size() == 0) {
+                for (i in 0 until projectsMenu.size()) {
+                    runOnUiThread {
+                        projectsMenu.getItem(i).isVisible = false
+                    }
+                }
+                return@thread
+            }
             projects.forEachIndexed { index, projectItem ->
                 val menuItem = projectsMenu.getItem(index)
                 if (menuItem.title != projectItem.name) {

@@ -55,9 +55,9 @@ class MainListViewFragment(
 
         // set activity title
         when (listViewType) {
-            ListViewType.UPCOMING -> activity.title = "Upcoming"
-            ListViewType.INBOX -> activity.title = "Inbox"
-            ListViewType.PROJECT -> activity.title = project?.name ?: "Project"
+            ListViewType.UPCOMING -> activity.title = getString(R.string.upcoming)
+            ListViewType.INBOX -> activity.title = getString(R.string.inbox)
+            ListViewType.PROJECT -> activity.title = project?.name ?: getString(R.string.project)
         }
 
         binding.addTask.setOnClickListener {
@@ -108,13 +108,11 @@ class MainListViewFragment(
         snackbar.show()
 
         Timer().schedule(if (snackbarDuration == Snackbar.LENGTH_LONG) 2750 else 1500) {
-            thread {
-                if (threadCompleteEnabled) {
-                    item.completedAt = now
-                    item.completed = true
-                    item.modified = now
-                    database.todoItemDao().update(item)
-                }
+            if (threadCompleteEnabled) {
+                item.completedAt = now
+                item.completed = true
+                item.modified = now
+                database.todoItemDao().update(item)
             }
         }
     }
@@ -140,10 +138,8 @@ class MainListViewFragment(
         snackbar.show()
 
         Timer().schedule(if (snackbarDuration == Snackbar.LENGTH_LONG) 2750 else 1500) {
-            thread {
-                if (threadDeleteEnabled)
-                    database.todoItemDao().delete(item)
-            }
+            if (threadDeleteEnabled)
+                database.todoItemDao().delete(item)
         }
     }
 
