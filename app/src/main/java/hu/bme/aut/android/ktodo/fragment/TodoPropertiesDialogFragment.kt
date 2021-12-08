@@ -44,7 +44,7 @@ class TodoPropertiesDialogFragment(
         val calendar: Calendar = Calendar.getInstance()
         val datepicker = DatePickerDialog(requireContext())
         if (item?.dueDate != null) {
-            datepicker.updateDate(item.dueDate!!.year, item.dueDate!!.monthValue, item.dueDate!!.dayOfMonth)
+            datepicker.updateDate(item.dueDate!!.year, item.dueDate!!.monthValue - 1, item.dueDate!!.dayOfMonth)
         }
         binding.etDueDate.setOnClickListener {
             datepicker.setOnDateSetListener { view, year, month, dayOfMonth ->
