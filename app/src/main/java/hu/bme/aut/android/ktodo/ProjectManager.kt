@@ -23,7 +23,7 @@ class ProjectManager : AppCompatActivity(), ProjectAdapter.ProjectItemClickListe
         super.onCreate(savedInstanceState)
         binding = ActivityProjectManagerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        title = getString(R.string.project)
+        title = getString(R.string.manage_projects)
         database = MainActivity.database
         initRecyclerView()
     }

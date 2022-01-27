@@ -29,7 +29,7 @@
     <string name="upcoming">Upcoming</string>
     <string name="inbox">Inbox</string>
     <string name="nav_item_add_project">Add project</string>
-    <string name="nav_item_manage_projects">Manage projects</string>
+    <string name="manage_projects">Manage projects</string>
     <string name="nav_item_projects">Projects</string>
     <string name="nav_item_stats">Stats</string>
     <string name="nav_item_settings">Settings</string>
