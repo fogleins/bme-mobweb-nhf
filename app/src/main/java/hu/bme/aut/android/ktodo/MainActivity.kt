@@ -13,6 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.snackbar.Snackbar
 import hu.bme.aut.android.ktodo.data.KTodoDatabase
 import hu.bme.aut.android.ktodo.data.project.ProjectItem
+import hu.bme.aut.android.ktodo.data.todo.TodoItem
 import hu.bme.aut.android.ktodo.databinding.ActivityMainBinding
 import hu.bme.aut.android.ktodo.enumeration.ListViewType
 import hu.bme.aut.android.ktodo.fragment.MainListViewFragment
@@ -65,11 +66,32 @@ class MainActivity : AppCompatActivity() {
         populateNavDrawerWithProjectNames()
     }
 
+    override fun onPause() {
+        super.onPause()
+        // write unsaved changes to database (eg. tasks marked as complete and marked for deletion,
+        // where the timer didn't reach zero)
+        thread {
+            for (task in pendingCompletions) {
+                task.completed = true
+                database.todoItemDao().update(task)
+            }
+            for (task in pendingDeletions) {
+                database.todoItemDao().delete(task)
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         // refresh the list of tasks when returning to the activity
         fragment.loadItemsInBackground()
         updateNavDrawerProjects()
+        // show the upcoming view on return to the main activity
+        fragment = MainListViewFragment()
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        fragmentTransaction.setCustomAnimations(fadeInAnimation, fadeOutAnimation)
+        fragmentTransaction.replace(binding.mainContent.id, fragment)
+        fragmentTransaction.commit()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean =
@@ -87,6 +109,9 @@ class MainActivity : AppCompatActivity() {
         lateinit var database: KTodoDatabase
         var fadeInAnimation = R.anim.anim_fade_in
         var fadeOutAnimation = R.anim.anim_fade_out
+
+        var pendingDeletions = mutableListOf<TodoItem>()
+        var pendingCompletions = mutableListOf<TodoItem>()
     }
 
     /**

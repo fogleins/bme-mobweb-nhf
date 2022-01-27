@@ -91,6 +91,9 @@ class MainListViewFragment(
         adapter.updateTodo(item)
         adapter.removeTodo(item)
         val now = LocalDateTime.now()
+        // make sure the task is marked as complete even if the activity is destroyed before the
+        // timer would run
+        MainActivity.pendingCompletions.add(item)
 
         val snackbar = Snackbar.make(
             binding.rvTodo,
@@ -113,6 +116,7 @@ class MainListViewFragment(
                 item.completed = true
                 item.modified = now
                 database.todoItemDao().update(item)
+                MainActivity.pendingCompletions.remove(item)
             }
         }
     }
@@ -121,6 +125,9 @@ class MainListViewFragment(
         var threadDeleteEnabled = true
         val index = adapter.items.indexOf(item)
         adapter.removeTodo(item)
+        // make sure the task is deleted even if the activity is destroyed before the
+        // timer would run
+        MainActivity.pendingDeletions.add(item)
 
         val snackbar = Snackbar.make(
             binding.rvTodo,
@@ -138,8 +145,10 @@ class MainListViewFragment(
         snackbar.show()
 
         Timer().schedule(if (snackbarDuration == Snackbar.LENGTH_LONG) 2750 else 1500) {
-            if (threadDeleteEnabled)
+            if (threadDeleteEnabled) {
                 database.todoItemDao().delete(item)
+                MainActivity.pendingDeletions.remove(item)
+            }
         }
     }
 
